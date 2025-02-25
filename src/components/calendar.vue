@@ -10,6 +10,8 @@ import interactionPlugin from '@fullcalendar/interaction';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '@/firebase';
 import { useRouter } from 'vue-router';
+// 日本語ロケールをインポート
+import jaLocale from '@fullcalendar/core/locales/ja';
 
 export default defineComponent({
   components: { FullCalendar },
@@ -41,6 +43,9 @@ export default defineComponent({
           html: `<span>${info.event.title}</span>`
         };
       },
+
+      // 日本語のロケールを設定
+      locale: jaLocale,  // 日本語ロケールを適用
     });
 
     const fetchEvents = async () => {

@@ -3,14 +3,26 @@
     <h2>イベント: {{ eventDetails.title }}</h2>
     <p>{{ eventDetails.description }}</p>
     <p>日時: {{ eventDetails.date }}</p>
+    <br>
     <label>氏名: <input v-model="name" required /></label>
-    <label>学部: <input v-model="faculty" required /></label>
+    <br>
+    <label>学部:
+      <select v-model="faculty">
+        <option value="sys">システム工学部</option>
+        <option value="edu">教育学部</option>
+        <option value="eco">経済学部</option>
+        <option value="tou">観光学部</option>
+        <option value="soc">社会インフォマティクス学環</option>
+      </select>
+    </label>
+    <br>
     <label>性別:
       <select v-model="gender">
         <option value="male">男性</option>
         <option value="female">女性</option>
       </select>
     </label>
+    <br>
     <button type="submit">予約する</button>
   </form>
 </template>
