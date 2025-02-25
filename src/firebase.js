@@ -1,6 +1,7 @@
 // src/firebase.js
 import { initializeApp, getApp, getApps } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
+import { getAuth } from "firebase/auth";  // 追加: 認証機能をインポート
 
 // Firebaseの設定（あなたのプロジェクトの情報を入力）
 const firebaseConfig = {
@@ -24,3 +25,6 @@ if (getApps().length === 0) {
 
 // Firestoreのインスタンスをエクスポート
 export const db = getFirestore(app);
+
+// 認証のインスタンスをエクスポート
+export const auth = getAuth(app);  // 追加: 認証のインスタンス

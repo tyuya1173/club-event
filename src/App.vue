@@ -1,13 +1,32 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { onMounted } from 'vue';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
-const router = useRouter();
+// メニューの開閉状態を管理するためのrefを定義
 const menuOpen = ref(false);
+const isAuthenticated = ref(false); // 認証状態を管理するref
+const router = useRouter();
+const auth = getAuth(); // Firebaseの認証インスタンス
 
+// メニューの開閉をトグルする関数
 const toggleMenu = () => {
   menuOpen.value = !menuOpen.value;
 };
+
+// アプリ起動時に認証状態を監視
+onMounted(() => {
+  onAuthStateChanged(auth, (user) => {
+    if (!user) {
+      // 認証されていなければサインアップページにリダイレクト
+      router.push('/signup');
+    } else {
+      // 認証されていれば正常にアプリを使用可能
+      isAuthenticated.value = true;
+    }
+  });
+});
 </script>
 
 <template>
@@ -24,6 +43,11 @@ const toggleMenu = () => {
   </header>
 
   <main>
+    <!-- 認証されていない場合はクリックできないように遮断 -->
+    <div v-if="!isAuthenticated">
+      <p>認証が完了していません。サインアップしてください。</p>
+    </div>
+
     <router-view /> <!-- ここで現在のコンポーネントが表示されます -->
   </main>
 </template>

@@ -2,6 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router';
 import Calendar from '../components/Calendar.vue';
 import Reservation from '../components/Reservation.vue';
 import Admin from '../components/Admin.vue';
+import SignUp from '../components/SignUp.vue';
+import Login from '../components/Login.vue';
 
 const routes = [
   {
@@ -19,6 +21,16 @@ const routes = [
     name: 'admin',
     component: Admin, // 管理画面
   },
+  {
+    path: '/signup',
+    name: 'signup',
+    component: SignUp, // サインアップ画面
+  },
+  {
+    path: '/login',
+    name: 'login',
+    component: Login, // ログイン画面
+  }
 ];
 
 const router = createRouter({

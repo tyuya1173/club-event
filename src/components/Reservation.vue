@@ -29,7 +29,7 @@
 
 <script>
 import { ref, onMounted } from 'vue';
-import { collection, doc, getDoc, addDoc } from 'firebase/firestore';  // addDoc をインポート
+import { collection, doc, getDoc, addDoc } from 'firebase/firestore';
 import { db } from '@/firebase';
 import { useRoute } from 'vue-router';
 
@@ -39,14 +39,13 @@ export default {
     const faculty = ref('');
     const gender = ref('male');
     const eventDetails = ref({});
-    const route = useRoute(); // ルート情報を取得
+    const route = useRoute();
 
-    // イベントIDを元にイベントの詳細を取得
     const fetchEventDetails = async () => {
       const eventId = route.query.eventId;
       if (eventId) {
         try {
-          const docRef = doc(db, 'events', eventId);  // イベントのドキュメント参照
+          const docRef = doc(db, 'events', eventId);
           const docSnap = await getDoc(docRef);
           if (docSnap.exists()) {
             eventDetails.value = docSnap.data();
@@ -59,18 +58,23 @@ export default {
       }
     };
 
-    // 予約の処理
     const submitReservation = async () => {
       try {
-        // 予約情報を reservations コレクションに追加
         await addDoc(collection(db, 'reservations'), {
           name: name.value,
           faculty: faculty.value,
           gender: gender.value,
-          eventId: route.query.eventId, // イベントIDも保存
-          createdAt: new Date(), // 予約時刻
+          eventId: route.query.eventId,
+          eventName: eventDetails.value.title, // イベント名を追加
+          createdAt: new Date(),
         });
+
         alert('予約完了');
+
+        // **入力内容をリセット**
+        name.value = '';
+        faculty.value = '';
+        gender.value = 'male';
       } catch (error) {
         console.error('Error submitting reservation:', error);
         alert('予約に失敗しました');

@@ -39,6 +39,16 @@
           詳細: {{ event.description }}
           <button @click="editEvent(event)">編集</button>
           <button @click="deleteEvent(event.id)">削除</button>
+          <button @click="fetchParticipants(event.id)">参加者一覧</button>
+
+          <div v-if="selectedEventId === event.id">
+            <h3>参加者名簿</h3>
+            <ul>
+              <li v-for="participant in participants" :key="participant.id">
+                名前: {{ participant.name }} | 学部: {{ participant.faculty }} | 性別: {{ participant.gender }}
+              </li>
+            </ul>
+          </div>
         </li>
       </ul>
 
@@ -49,7 +59,7 @@
 
 <script>
 import { ref, onMounted } from 'vue';
-import { collection, addDoc, getDocs, doc, deleteDoc, updateDoc } from 'firebase/firestore';
+import { collection, addDoc, getDocs, doc, deleteDoc, updateDoc, query, where } from 'firebase/firestore';
 import { db } from '@/firebase';
 
 export default {
@@ -84,6 +94,8 @@ export default {
     });
     const events = ref([]);
     const editingEvent = ref(null);
+    const selectedEventId = ref(null);
+    const participants = ref([]);
 
     const fetchEvents = async () => {
       const querySnapshot = await getDocs(collection(db, 'events'));
@@ -134,6 +146,21 @@ export default {
       }
     };
 
+    // 参加者一覧の取得
+    const fetchParticipants = async (eventId) => {
+      try {
+        selectedEventId.value = eventId;
+        const q = query(collection(db, 'reservations'), where('eventId', '==', eventId));
+        const querySnapshot = await getDocs(q);
+        participants.value = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+      } catch (error) {
+        console.error('参加者の取得に失敗しました', error);
+      }
+    };
+
     onMounted(fetchEvents);
 
     return {
@@ -146,7 +173,10 @@ export default {
       events,
       submitEvent,
       editEvent,
-      deleteEvent
+      deleteEvent,
+      selectedEventId,
+      participants,
+      fetchParticipants
     };
   }
 };
@@ -176,7 +206,7 @@ button:hover {
   color: red;
   margin-top: 1rem;
 }
-h2 {
+h2, h3 {
   margin-top: 2rem;
 }
 ul {
