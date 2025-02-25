@@ -9,17 +9,32 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '@/firebase';
+import { useRouter } from 'vue-router';
 
 export default defineComponent({
   components: { FullCalendar },
   setup() {
     const events = ref([]);
+    const router = useRouter(); // ルーターを使用
+
     const calendarOptions = ref({
       plugins: [dayGridPlugin, interactionPlugin],
       initialView: 'dayGridMonth',
       events: events.value, // eventsを直接参照
 
-      // イベントが表示される際に何を表示するかをカスタマイズ
+      // イベントがクリックされたときに予約画面に遷移
+      eventClick: function(info) {
+        console.log('Event clicked:', info);
+        const eventId = info.event.id;
+
+        // 予約画面に遷移、paramsまたはqueryにeventIdを渡す
+        router.push({ 
+          name: 'reserve', 
+          query: { eventId } // クエリパラメータとしてeventIdを渡す
+        });
+      },
+
+      // イベントの内容をカスタマイズしてイベント名のみ表示
       eventContent: function(info) {
         return {
           // イベント名だけを表示
@@ -35,15 +50,6 @@ export default defineComponent({
           const data = doc.data();
           const startDate = new Date(data.date);
 
-          // イベントの詳細をログに出力
-          console.log('Fetched Event:', {
-            id: doc.id,
-            title: data.title,
-            description: data.description,
-            location: data.location,
-            start: startDate,
-          });
-
           return {
             id: doc.id,
             title: data.title,
@@ -52,17 +58,13 @@ export default defineComponent({
             start: startDate,
           };
         });
-        // Firestoreから取得したイベントをeventsにセット
         events.value = fetchedEvents;
-
-        // calendarOptionsを更新してカレンダーに反映
         calendarOptions.value.events = events.value;
       } catch (error) {
         console.error('Error fetching events:', error);
       }
     };
 
-    // コンポーネントがマウントされた時にイベントを取得
     onMounted(fetchEvents);
 
     return {

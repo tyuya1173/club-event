@@ -7,7 +7,7 @@ const routes = [
   {
     path: '/',
     name: 'home',
-    component: Calendar, // ホーム画面としてCalendar.vueを設定
+    component: Calendar,
   },
   {
     path: '/reserve',
