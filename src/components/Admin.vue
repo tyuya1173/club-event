@@ -27,6 +27,8 @@
         <strong>{{ event.title }}</strong> - {{ event.date }} <br />
         場所: {{ event.location }} <br />
         詳細: {{ event.description }}
+        <button @click="editEvent(event)">編集</button>
+        <button @click="deleteEvent(event.id)">削除</button>
       </li>
     </ul>
   </div>
@@ -34,7 +36,7 @@
 
 <script>
 import { ref, onMounted } from 'vue';
-import { collection, addDoc, getDocs } from 'firebase/firestore';
+import { collection, addDoc, getDocs, doc, deleteDoc, updateDoc } from 'firebase/firestore';
 import { db } from '@/firebase';
 
 export default {
@@ -46,6 +48,7 @@ export default {
       description: ''
     });
     const events = ref([]);
+    const editingEvent = ref(null); // 編集するイベントのデータ
 
     const fetchEvents = async () => {
       const querySnapshot = await getDocs(collection(db, 'events'));
@@ -57,13 +60,26 @@ export default {
 
     const submitEvent = async () => {
       try {
-        await addDoc(collection(db, 'events'), {
-          title: newEvent.value.title,
-          date: newEvent.value.date,
-          location: newEvent.value.location,
-          description: newEvent.value.description
-        });
-        // 入力後フォームをクリア
+        if (editingEvent.value) {
+          // 編集の場合
+          const docRef = doc(db, 'events', editingEvent.value.id);
+          await updateDoc(docRef, {
+            title: newEvent.value.title,
+            date: newEvent.value.date,
+            location: newEvent.value.location,
+            description: newEvent.value.description
+          });
+          editingEvent.value = null; // 編集を終了
+        } else {
+          // 新規追加の場合
+          await addDoc(collection(db, 'events'), {
+            title: newEvent.value.title,
+            date: newEvent.value.date,
+            location: newEvent.value.location,
+            description: newEvent.value.description
+          });
+        }
+        // フォームの内容をリセット
         newEvent.value.title = '';
         newEvent.value.date = '';
         newEvent.value.location = '';
@@ -75,12 +91,33 @@ export default {
       }
     };
 
+    const editEvent = (event) => {
+      // 編集フォームにイベントのデータを設定
+      newEvent.value.title = event.title;
+      newEvent.value.date = event.date;
+      newEvent.value.location = event.location;
+      newEvent.value.description = event.description;
+      editingEvent.value = event; // 編集対象のイベント
+    };
+
+    const deleteEvent = async (eventId) => {
+      try {
+        const docRef = doc(db, 'events', eventId);
+        await deleteDoc(docRef);
+        fetchEvents(); // イベントリストを再取得
+      } catch (error) {
+        console.error('イベントの削除に失敗しました', error);
+      }
+    };
+
     onMounted(fetchEvents);
 
     return {
       newEvent,
       events,
-      submitEvent
+      submitEvent,
+      editEvent,
+      deleteEvent
     };
   }
 };
@@ -115,5 +152,8 @@ ul {
 }
 li {
   margin-bottom: 1rem;
+}
+button {
+  margin-left: 10px;
 }
 </style>
