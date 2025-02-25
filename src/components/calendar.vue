@@ -46,6 +46,13 @@ export default defineComponent({
 
       // 日本語のロケールを設定
       locale: jaLocale,  // 日本語ロケールを適用
+
+      // 全てを1画面に表示するために高さを設定
+      height: 'auto',  // 自動的に高さを調整
+
+      // スクロールを防ぐための設定
+      contentHeight: 'auto', // コンテンツの高さを自動に設定
+      aspectRatio: 1.5, // 幅と高さの比率を調整（画面に収まるように調整）
     });
 
     const fetchEvents = async () => {

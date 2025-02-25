@@ -8,11 +8,11 @@
     <br>
     <label>学部:
       <select v-model="faculty">
-        <option value="sys">システム工学部</option>
-        <option value="edu">教育学部</option>
-        <option value="eco">経済学部</option>
-        <option value="tou">観光学部</option>
-        <option value="soc">社会インフォマティクス学環</option>
+        <option value="システム工学部">システム工学部</option>
+        <option value="教育学部">教育学部</option>
+        <option value="経済学部">経済学部</option>
+        <option value="観光学部">観光学部</option>
+        <option value="社会インフォマティクス">社会インフォマティクス学環</option>
       </select>
     </label>
     <br>

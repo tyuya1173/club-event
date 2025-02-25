@@ -12,7 +12,9 @@ const toggleMenu = () => {
 
 <template>
   <header>
-    <h1>イベントカレンダー</h1>
+    <!-- イベントカレンダーのタイトルをクリックするとホームに遷移 -->
+    <router-link to="/" class="header-title">イベントカレンダー</router-link>
+
     <button class="burger-menu" @click="toggleMenu">☰</button>
     <nav v-if="menuOpen">
       <!-- メニュー内のリンクをクリックすると画面遷移 -->
@@ -36,8 +38,13 @@ header {
   color: white;
   margin-bottom: 100px;
 }
-h1 {
-  margin: 0;
+.header-title {
+  font-size: 24px;
+  color: white;
+  text-decoration: none;
+}
+.header-title:hover {
+  text-decoration: underline;
 }
 .burger-menu {
   font-size: 24px;
