@@ -1,45 +1,68 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import FullCalendar from '@fullcalendar/vue3';
-import dayGridPlugin from '@fullcalendar/daygrid';
-import interactionPlugin from '@fullcalendar/interaction';
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from '@/firebase';
 
 const router = useRouter();
-const events = ref([]);
+const menuOpen = ref(false);
 
-const fetchEvents = async () => {
-  const querySnapshot = await getDocs(collection(db, 'events'));
-  events.value = querySnapshot.docs.map(doc => ({
-    id: doc.id,
-    title: doc.data().title,
-    start: doc.data().date,
-    extendedProps: { eventId: doc.id }
-  }));
+const toggleMenu = () => {
+  menuOpen.value = !menuOpen.value;
 };
-
-onMounted(fetchEvents);
 </script>
 
 <template>
-  <div>
+  <header>
     <h1>イベントカレンダー</h1>
-    <FullCalendar :options="{
-      plugins: [dayGridPlugin, interactionPlugin],
-      initialView: 'dayGridMonth',
-      events: events,
-      eventClick: (info) => {
-        router.push(`/reservation/${info.event.extendedProps.eventId}`);
-      }
-    }" />
-  </div>
+    <button class="burger-menu" @click="toggleMenu">☰</button>
+    <nav v-if="menuOpen">
+      <!-- メニュー内のリンクをクリックすると画面遷移 -->
+      <router-link to="/" @click="menuOpen = false">ホーム</router-link>
+      <router-link to="/reserve" @click="menuOpen = false">予約</router-link>
+      <router-link to="/admin" @click="menuOpen = false">管理</router-link>
+    </nav>
+  </header>
+
+  <main>
+    <router-view /> <!-- ここで現在のコンポーネントが表示されます -->
+  </main>
 </template>
 
 <style scoped>
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background: #42b883;
+  color: white;
+  margin-bottom: 100px;
+}
 h1 {
+  margin: 0;
+}
+.burger-menu {
+  font-size: 24px;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+nav {
+  position: absolute;
+  top: 50px;
+  right: 10px;
+  background: white;
+  padding: 10px;
+  border: 1px solid #ddd;
+}
+nav a {
+  display: block;
+  padding: 5px;
+  color: #42b883;
+  text-decoration: none;
+}
+main {
+  padding: 20px;
   text-align: center;
-  margin-bottom: 20px;
 }
 </style>

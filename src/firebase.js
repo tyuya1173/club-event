@@ -1,8 +1,8 @@
-// Firebase SDK をインポート
-import { initializeApp } from "firebase/app";
+// src/firebase.js
+import { initializeApp, getApp, getApps } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 
-// Firebase の設定（Firebase コンソールで取得した情報を入力）
+// Firebaseの設定（あなたのプロジェクトの情報を入力）
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
@@ -12,10 +12,15 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
-// Firebase アプリを初期化
-const app = initializeApp(firebaseConfig);
+// Firebaseアプリがすでに初期化されていないか確認
+let app;
+if (getApps().length === 0) {
+  // 初期化されていなければ、新たにアプリを初期化
+  app = initializeApp(firebaseConfig);
+} else {
+  // 初期化済みのアプリを取得
+  app = getApp();
+}
 
-// Firestore のインスタンスを取得
-const db = getFirestore(app);
-
-export { db };
+// Firestoreのインスタンスをエクスポート
+export const db = getFirestore(app);

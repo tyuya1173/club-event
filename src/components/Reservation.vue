@@ -15,11 +15,10 @@
   <script>
   import { ref } from 'vue';
   import { collection, addDoc } from 'firebase/firestore';
-  import { useFirebase } from '@/firebase';
+  import { db } from '@/firebase';
   
   export default {
     setup() {
-      const { db } = useFirebase();
       const name = ref('');
       const faculty = ref('');
       const gender = ref('male');

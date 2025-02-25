@@ -8,12 +8,11 @@
   import dayGridPlugin from '@fullcalendar/daygrid';
   import interactionPlugin from '@fullcalendar/interaction';
   import { collection, getDocs } from 'firebase/firestore';
-  import { useFirebase } from '@/firebase';
+  import { db } from '@/firebase';
   
   export default defineComponent({
     components: { FullCalendar },
     setup() {
-      const { db } = useFirebase();
       const events = ref([]);
   
       const fetchEvents = async () => {
