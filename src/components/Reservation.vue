@@ -2,7 +2,7 @@
   <form @submit.prevent="submitReservation">
     <h2>イベント: {{ eventDetails.title }}</h2>
     <p>{{ eventDetails.description }}</p>
-    <p>日時: {{ eventDetails.date }}</p> 
+    <p>日時: {{ eventDetails.date }}</p>
     <label>氏名: <input v-model="name" required /></label>
     <label>学部: <input v-model="faculty" required /></label>
     <label>性別:
@@ -17,7 +17,7 @@
 
 <script>
 import { ref, onMounted } from 'vue';
-import { collection, doc, getDoc } from 'firebase/firestore';
+import { collection, doc, getDoc, addDoc } from 'firebase/firestore';  // addDoc をインポート
 import { db } from '@/firebase';
 import { useRoute } from 'vue-router';
 
@@ -34,7 +34,7 @@ export default {
       const eventId = route.query.eventId;
       if (eventId) {
         try {
-          const docRef = doc(db, 'events', eventId);
+          const docRef = doc(db, 'events', eventId);  // イベントのドキュメント参照
           const docSnap = await getDoc(docRef);
           if (docSnap.exists()) {
             eventDetails.value = docSnap.data();
@@ -49,14 +49,20 @@ export default {
 
     // 予約の処理
     const submitReservation = async () => {
-      await addDoc(collection(db, 'reservations'), {
-        name: name.value,
-        faculty: faculty.value,
-        gender: gender.value,
-        eventId: route.query.eventId, // イベントIDも保存
-        createdAt: new Date(),
-      });
-      alert('予約完了');
+      try {
+        // 予約情報を reservations コレクションに追加
+        await addDoc(collection(db, 'reservations'), {
+          name: name.value,
+          faculty: faculty.value,
+          gender: gender.value,
+          eventId: route.query.eventId, // イベントIDも保存
+          createdAt: new Date(), // 予約時刻
+        });
+        alert('予約完了');
+      } catch (error) {
+        console.error('Error submitting reservation:', error);
+        alert('予約に失敗しました');
+      }
     };
 
     onMounted(fetchEventDetails);

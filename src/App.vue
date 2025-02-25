@@ -17,7 +17,6 @@ const toggleMenu = () => {
     <nav v-if="menuOpen">
       <!-- メニュー内のリンクをクリックすると画面遷移 -->
       <router-link to="/" @click="menuOpen = false">ホーム</router-link>
-      <router-link to="/reserve" @click="menuOpen = false">予約</router-link>
       <router-link to="/admin" @click="menuOpen = false">管理</router-link>
     </nav>
   </header>
