@@ -45,6 +45,8 @@ export default defineComponent({
       height: 'auto',
       contentHeight: 'auto',
       aspectRatio: 1.5,
+      // モバイル向けのスクロール設定
+      windowResize: true,
     });
 
     // イベントデータの取得
@@ -62,7 +64,7 @@ export default defineComponent({
           };
         });
         events.value = fetchedEvents;
-        
+
         // カレンダーオプションのイベントを更新
         calendarOptions.value = {
           ...calendarOptions.value,
@@ -82,3 +84,33 @@ export default defineComponent({
   },
 });
 </script>
+
+<style scoped>
+/* スマホ用にレスポンシブ対応 */
+@media (max-width: 600px) {
+  .fc {
+    font-size: 12px;  /* フォントサイズを小さく */
+  }
+
+  .fc-header-toolbar {
+    padding: 5px 10px;  /* ツールバーのパディング調整 */
+  }
+
+  .fc-daygrid-day {
+    padding: 5px;  /* 日付セルのパディング調整 */
+  }
+
+  /* カレンダーの高さが足りない場合、スクロールを有効に */
+  .fc-scroller {
+    max-height: 80vh;  /* スクロールエリアの最大高さ */
+    overflow-y: auto;  /* 縦スクロール可能に */
+  }
+}
+
+/* タブレット向け（601px〜）のデザイン調整 */
+@media (min-width: 601px) and (max-width: 1024px) {
+  .fc {
+    font-size: 14px;  /* タブレットサイズのフォントサイズ */
+  }
+}
+</style>

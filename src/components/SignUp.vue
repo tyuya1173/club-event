@@ -52,3 +52,78 @@ export default {
   },
 };
 </script>
+<style scoped>
+div {
+  max-width: 400px;
+  margin: auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+h2 {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  background-color: #42b883;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+button:disabled {
+  background-color: #ccc;
+}
+
+p {
+  color: red;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+router-link {
+  display: block;
+  text-align: center;
+  margin-top: 20px;
+  font-size: 1rem;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 600px) {
+  div {
+    padding: 15px;
+  }
+
+  h2 {
+    font-size: 1.3rem;
+  }
+
+  input, button {
+    font-size: 1rem;
+  }
+
+  button {
+    padding: 12px;
+  }
+
+  p {
+    font-size: 0.9rem;
+  }
+}
+</style>

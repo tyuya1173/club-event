@@ -150,18 +150,23 @@
     margin: auto;
     padding: 20px;
     text-align: center;
+    font-family: Arial, sans-serif;
   }
+  
   .section {
     margin-bottom: 20px;
   }
+  
   .event-link {
     color: #42b883;
     cursor: pointer;
     text-decoration: underline;
   }
+  
   .event-link:hover {
     color: #2c7a7b;
   }
+  
   button {
     margin-top: 10px;
     padding: 8px 12px;
@@ -169,12 +174,14 @@
     background-color: #42b883;
     color: white;
     cursor: pointer;
+    border-radius: 4px;
+    font-size: 1rem;
   }
+  
   button:disabled {
     background-color: #ccc;
   }
   
-  /* モーダルのスタイル */
   .modal {
     position: fixed;
     top: 0;
@@ -186,6 +193,7 @@
     justify-content: center;
     align-items: center;
   }
+  
   .modal-content {
     background: white;
     padding: 20px;
@@ -193,5 +201,37 @@
     text-align: center;
     width: 80%;
     max-width: 400px;
+    overflow: hidden;
+  }
+  
+  /* レスポンシブ対応 */
+  @media (max-width: 600px) {
+    .mypage {
+      padding: 15px;
+      font-size: 0.9rem;
+    }
+  
+    .section h3 {
+      font-size: 1.2rem;
+    }
+  
+    .event-link {
+      font-size: 0.9rem;
+    }
+  
+    button {
+      padding: 10px 16px;
+      font-size: 1.1rem;
+      width: 100%;
+    }
+  
+    .modal-content {
+      width: 90%;
+      padding: 15px;
+    }
+  
+    .modal p {
+      font-size: 0.9rem;
+    }
   }
   </style>

@@ -67,7 +67,7 @@ export default {
     const password = ref('');
     const authenticated = ref(false);
     const errorMessage = ref('');
-    const correctPassword = 'yourPassword'; // パスワードを設定
+    const correctPassword = 'rikuho2026'; // パスワードを設定
 
     const checkPassword = () => {
       if (password.value === correctPassword) {
@@ -174,33 +174,60 @@ h1 {
   font-size: 2rem;
   margin-bottom: 1rem;
 }
-input, textarea {
-  padding: 0.5rem;
+
+input, textarea, button {
+  padding: 0.75rem;
   margin: 0.5rem;
+  width: 100%;  /* 幅を100%に設定 */
+  box-sizing: border-box;
   border: 1px solid #ccc;
+  border-radius: 4px;
 }
+
 button {
-  padding: 0.5rem;
   background-color: #42b883;
   color: white;
   border: none;
   cursor: pointer;
 }
+
 button:hover {
   background-color: #367c58;
 }
+
 .error {
   color: red;
   margin-top: 1rem;
 }
+
 h2, h3 {
   margin-top: 2rem;
 }
+
 ul {
   list-style-type: none;
   padding: 0;
 }
+
 li {
   margin-bottom: 1rem;
+}
+
+@media (max-width: 600px) {
+  h1 {
+    font-size: 1.5rem;
+  }
+  
+  input, textarea, button {
+    padding: 0.5rem;
+  }
+
+  button {
+    font-size: 1rem;
+  }
+
+  ul {
+    padding-left: 1rem;
+  }
 }
 </style>

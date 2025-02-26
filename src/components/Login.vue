@@ -1,17 +1,17 @@
 <template>
-  <div>
+  <div class="login-container">
     <h2>ログイン</h2>
-    <form @submit.prevent="handleLogin">
-      <input v-model="email" type="email" placeholder="Email" required />
-      <input v-model="password" type="password" placeholder="Password" required />
-      <button type="submit" :disabled="loading">ログイン</button>
+    <form @submit.prevent="handleLogin" class="login-form">
+      <input v-model="email" type="email" placeholder="Email" required class="input" />
+      <input v-model="password" type="password" placeholder="Password" required class="input" />
+      <button type="submit" :disabled="loading" class="submit-btn">ログイン</button>
     </form>
     
     <!-- エラーメッセージの表示 -->
     <p v-if="error" class="error">{{ error }}</p>
 
     <!-- サインアップ画面へのリンク -->
-    <p>アカウントをお持ちでないですか？ 
+    <p class="signup-link">アカウントをお持ちでないですか？ 
       <router-link to="/signup">サインアップはこちら</router-link>
     </p>
   </div>
@@ -77,8 +77,80 @@ export default {
 </script>
 
 <style scoped>
+/* コンテナのスタイル */
+.login-container {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  text-align: center;
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+}
+
+/* フォームのスタイル */
+.login-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.input {
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.submit-btn {
+  padding: 10px;
+  background-color: #42b883;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.submit-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
 .error {
   color: red;
+  text-align: center;
   margin-top: 10px;
+}
+
+/* サインアップリンク */
+.signup-link {
+  text-align: center;
+  margin-top: 20px;
+}
+
+/* メディアクエリでスマホ対応 */
+@media (max-width: 600px) {
+  .login-container {
+    padding: 15px;
+    max-width: 90%;
+  }
+
+  .input {
+    padding: 8px;
+    font-size: 14px;
+  }
+
+  .submit-btn {
+    padding: 12px;
+    font-size: 16px;
+  }
+
+  h2 {
+    font-size: 1.2rem;
+  }
 }
 </style>
