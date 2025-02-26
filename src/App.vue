@@ -27,17 +27,35 @@ const monitorAuthState = () => {
   });
 };
 
+// 認証されていない場合、遷移を防ぐ
+const guardRoute = (to) => {
+  if (!isAuthenticated.value && to.path !== '/signup' && to.path !== '/login') {
+    // 認証されていない場合、サインアップページにリダイレクト
+    router.push('/signup');
+    return false;
+  }
+  return true;
+};
+
 // 初期化
 onMounted(monitorAuthState);
+
+// ルーターガード
+router.beforeEach((to, from, next) => {
+  if (guardRoute(to)) {
+    next();
+  }
+});
 </script>
 
 <template>
   <header>
     <!-- イベントカレンダーのタイトルをクリックするとホームに遷移 -->
-    <router-link to="/" class="header-title">イベントカレンダー</router-link>
-
-    <button class="burger-menu" @click="toggleMenu">☰</button>
-    <nav v-if="menuOpen">
+    <router-link to="/" class="header-title" v-if="isAuthenticated">イベントカレンダー</router-link>
+    
+    <!-- サインアップまたはログインが完了していない場合、リンクは表示しない -->
+    <button v-if="isAuthenticated" class="burger-menu" @click="toggleMenu">☰</button>
+    <nav v-if="menuOpen && isAuthenticated">
       <!-- メニュー内のリンクをクリックすると画面遷移 -->
       <router-link to="/" @click="menuOpen = false">ホーム</router-link>
       <router-link to="/admin" @click="menuOpen = false">管理</router-link>
