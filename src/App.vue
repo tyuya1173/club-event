@@ -1,7 +1,6 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { onMounted } from 'vue';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 // メニューの開閉状態を管理するためのrefを定義
@@ -16,7 +15,7 @@ const toggleMenu = () => {
 };
 
 // アプリ起動時に認証状態を監視
-onMounted(() => {
+const monitorAuthState = () => {
   onAuthStateChanged(auth, (user) => {
     if (!user) {
       // 認証されていなければサインアップページにリダイレクト
@@ -26,7 +25,10 @@ onMounted(() => {
       isAuthenticated.value = true;
     }
   });
-});
+};
+
+// 初期化
+onMounted(monitorAuthState);
 </script>
 
 <template>

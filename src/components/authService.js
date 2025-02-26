@@ -1,25 +1,50 @@
-import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import { ref } from 'vue';
-import { signInWithEmailAndPassword } from 'firebase/auth';
 
-// Firebaseの認証インスタンスを取得
 const auth = getAuth();
 
-export const signUp = async (email, password) => {
-  try {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    return userCredential.user;  // サインアップしたユーザー情報を返す
-  } catch (error) {
-    throw new Error(error.message);  // エラーメッセージをスロー
-  }
-};
+export const useAuth = () => {
+  const user = ref(null);
+  const errorMessage = ref('');
 
-// ログイン処理
-export const signIn = async (email, password) => {
-  try {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    return userCredential.user;  // ログインしたユーザー情報を返す
-  } catch (error) {
-    throw new Error(error.message);  // エラーメッセージをスロー
-  }
+  // 共通のエラーハンドリング関数
+  const handleError = (error) => {
+    errorMessage.value = error.message || '認証エラーが発生しました';
+  };
+
+  // サインアップ処理
+  const signUp = async (email, password) => {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      user.value = userCredential.user;
+      errorMessage.value = '';  // 成功時にエラーメッセージをリセット
+    } catch (error) {
+      handleError(error);
+    }
+  };
+
+  // サインイン処理
+  const signIn = async (email, password) => {
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      user.value = userCredential.user;
+      errorMessage.value = '';  // 成功時にエラーメッセージをリセット
+    } catch (error) {
+      handleError(error);
+    }
+  };
+
+  // ログアウト処理
+  const logout = () => {
+    auth.signOut();
+    user.value = null;
+  };
+
+  return {
+    user,
+    errorMessage,
+    signUp,
+    signIn,
+    logout,
+  };
 };

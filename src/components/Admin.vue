@@ -64,11 +64,10 @@ import { db } from '@/firebase';
 
 export default {
   setup() {
-    // 認証管理
     const password = ref('');
     const authenticated = ref(false);
     const errorMessage = ref('');
-    const correctPassword = 'yourPassword'; // ここでパスワードを設定
+    const correctPassword = 'yourPassword'; // パスワードを設定
 
     const checkPassword = () => {
       if (password.value === correctPassword) {
@@ -85,7 +84,6 @@ export default {
       password.value = '';
     };
 
-    // イベント管理
     const newEvent = ref({
       title: '',
       date: '',
@@ -109,20 +107,10 @@ export default {
       try {
         if (editingEvent.value) {
           const docRef = doc(db, 'events', editingEvent.value.id);
-          await updateDoc(docRef, {
-            title: newEvent.value.title,
-            date: newEvent.value.date,
-            location: newEvent.value.location,
-            description: newEvent.value.description
-          });
+          await updateDoc(docRef, { ...newEvent.value });
           editingEvent.value = null;
         } else {
-          await addDoc(collection(db, 'events'), {
-            title: newEvent.value.title,
-            date: newEvent.value.date,
-            location: newEvent.value.location,
-            description: newEvent.value.description
-          });
+          await addDoc(collection(db, 'events'), { ...newEvent.value });
         }
         newEvent.value = { title: '', date: '', location: '', description: '' };
         fetchEvents();
@@ -146,7 +134,6 @@ export default {
       }
     };
 
-    // 参加者一覧の取得
     const fetchParticipants = async (eventId) => {
       try {
         selectedEventId.value = eventId;

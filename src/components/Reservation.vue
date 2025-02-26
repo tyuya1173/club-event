@@ -42,36 +42,32 @@ export default {
     const faculty = ref('');
     const gender = ref('male');
     const eventDetails = ref({});
-    const userEmail = ref(null); // ユーザーのメールアドレスを保存
+    const userEmail = ref(null);
     const route = useRoute();
     const auth = getAuth();
 
     // ログイン中のユーザーのメールアドレスを取得
-    onMounted(() => {
+    const fetchUserEmail = () => {
       onAuthStateChanged(auth, (user) => {
-        if (user) {
-          userEmail.value = user.email; // メールアドレスをセット
-        } else {
-          userEmail.value = null; // 未ログインの場合
-        }
+        userEmail.value = user ? user.email : null;
       });
-    });
+    };
 
     // イベントの詳細を取得
     const fetchEventDetails = async () => {
       const eventId = route.query.eventId;
-      if (eventId) {
-        try {
-          const docRef = doc(db, 'events', eventId);
-          const docSnap = await getDoc(docRef);
-          if (docSnap.exists()) {
-            eventDetails.value = docSnap.data();
-          } else {
-            console.log('No such event!');
-          }
-        } catch (error) {
-          console.error('Error fetching event details:', error);
+      if (!eventId) return;
+      
+      try {
+        const docRef = doc(db, 'events', eventId);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          eventDetails.value = docSnap.data();
+        } else {
+          console.log('No such event!');
         }
+      } catch (error) {
+        console.error('Error fetching event details:', error);
       }
     };
 
@@ -87,27 +83,36 @@ export default {
           name: name.value,
           faculty: faculty.value,
           gender: gender.value,
-          email: userEmail.value, // ユーザーのメールアドレスを保存
+          email: userEmail.value,
           eventId: route.query.eventId,
           eventName: eventDetails.value.title,
           createdAt: new Date(),
         });
 
         alert('予約完了');
-
-        // **入力内容をリセット**
-        name.value = '';
-        faculty.value = '';
-        gender.value = 'male';
+        resetForm();
       } catch (error) {
         console.error('Error submitting reservation:', error);
         alert('予約に失敗しました');
       }
     };
 
-    onMounted(fetchEventDetails);
+    // フォームリセット
+    const resetForm = () => {
+      name.value = '';
+      faculty.value = '';
+      gender.value = 'male';
+    };
 
-    return { name, faculty, gender, userEmail, submitReservation, eventDetails };
+    // 初期化処理
+    onMounted(() => {
+      fetchUserEmail();
+      fetchEventDetails();
+    });
+
+    return {
+      name, faculty, gender, userEmail, eventDetails, submitReservation
+    };
   }
 };
 </script>

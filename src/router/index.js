@@ -4,13 +4,13 @@ import Reservation from '../components/Reservation.vue';
 import Admin from '../components/Admin.vue';
 import SignUp from '../components/SignUp.vue';
 import Login from '../components/Login.vue';
-import MyPage from '../components/ MyPage.vue';
+import MyPage from '../components/MyPage.vue';
 
 const routes = [
   {
     path: '/',
     name: 'home',
-    component: Calendar,
+    component: Calendar, // イベントカレンダー
   },
   {
     path: '/reserve',

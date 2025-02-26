@@ -10,73 +10,70 @@ import interactionPlugin from '@fullcalendar/interaction';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '@/firebase';
 import { useRouter } from 'vue-router';
-// 日本語ロケールをインポート
 import jaLocale from '@fullcalendar/core/locales/ja';
 
 export default defineComponent({
   components: { FullCalendar },
   setup() {
     const events = ref([]);
-    const router = useRouter(); // ルーターを使用
+    const router = useRouter();
 
+    // カレンダーのオプションを定義
     const calendarOptions = ref({
       plugins: [dayGridPlugin, interactionPlugin],
       initialView: 'dayGridMonth',
-      events: events.value, // eventsを直接参照
+      events: () => events.value,  // イベントはリアクティブに設定
 
-      // イベントがクリックされたときに予約画面に遷移
-      eventClick: function(info) {
-        console.log('Event clicked:', info);
-        const eventId = info.event.id;
-
-        // 予約画面に遷移、paramsまたはqueryにeventIdを渡す
+      // イベントクリック時の処理
+      eventClick: ({ event }) => {
+        const eventId = event.id;
         router.push({ 
           name: 'reserve', 
-          query: { eventId } // クエリパラメータとしてeventIdを渡す
+          query: { eventId } 
         });
       },
 
-      // イベントの内容をカスタマイズしてイベント名のみ表示
-      eventContent: function(info) {
-        return {
-          // イベント名だけを表示
-          html: `<span>${info.event.title}</span>`
-        };
-      },
+      // イベント内容のカスタマイズ
+      eventContent: ({ event }) => ({
+        html: `<span>${event.title}</span>`  // イベント名だけを表示
+      }),
 
-      // 日本語のロケールを設定
-      locale: jaLocale,  // 日本語ロケールを適用
+      // 日本語ロケール
+      locale: jaLocale,
 
-      // 全てを1画面に表示するために高さを設定
-      height: 'auto',  // 自動的に高さを調整
-
-      // スクロールを防ぐための設定
-      contentHeight: 'auto', // コンテンツの高さを自動に設定
-      aspectRatio: 1.5, // 幅と高さの比率を調整（画面に収まるように調整）
+      // 高さとスクロールの設定
+      height: 'auto',
+      contentHeight: 'auto',
+      aspectRatio: 1.5,
     });
 
+    // イベントデータの取得
     const fetchEvents = async () => {
       try {
         const querySnapshot = await getDocs(collection(db, 'events'));
         const fetchedEvents = querySnapshot.docs.map(doc => {
           const data = doc.data();
-          const startDate = new Date(data.date);
-
           return {
             id: doc.id,
             title: data.title,
             description: data.description,
             location: data.location,
-            start: startDate,
+            start: new Date(data.date),  // startを日付オブジェクトとして保存
           };
         });
         events.value = fetchedEvents;
-        calendarOptions.value.events = events.value;
+        
+        // カレンダーオプションのイベントを更新
+        calendarOptions.value = {
+          ...calendarOptions.value,
+          events: events.value,  // イベントデータを反映
+        };
       } catch (error) {
-        console.error('Error fetching events:', error);
+        console.error('イベントの取得に失敗しました:', error);
       }
     };
 
+    // コンポーネントがマウントされたときにイベントデータを取得
     onMounted(fetchEvents);
 
     return {
