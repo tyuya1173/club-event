@@ -39,6 +39,7 @@ onMounted(() => {
       <!-- メニュー内のリンクをクリックすると画面遷移 -->
       <router-link to="/" @click="menuOpen = false">ホーム</router-link>
       <router-link to="/admin" @click="menuOpen = false">管理</router-link>
+      <router-link to="/mypage" @click="menuOpen = false">マイページ</router-link>
     </nav>
   </header>
 

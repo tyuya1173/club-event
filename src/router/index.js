@@ -4,6 +4,7 @@ import Reservation from '../components/Reservation.vue';
 import Admin from '../components/Admin.vue';
 import SignUp from '../components/SignUp.vue';
 import Login from '../components/Login.vue';
+import MyPage from '../components/ MyPage.vue';
 
 const routes = [
   {
@@ -30,6 +31,11 @@ const routes = [
     path: '/login',
     name: 'login',
     component: Login, // ログイン画面
+  },
+  {
+    path: '/mypage',
+    name: 'mypage',
+    component: MyPage, // マイページ
   }
 ];
 

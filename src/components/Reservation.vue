@@ -23,13 +23,16 @@
       </select>
     </label>
     <br>
-    <button type="submit">予約する</button>
+    <p><strong>登録メールアドレス:</strong> {{ userEmail || '未ログイン' }}</p>
+    <br>
+    <button type="submit" :disabled="!userEmail">予約する</button>
   </form>
 </template>
 
 <script>
 import { ref, onMounted } from 'vue';
 import { collection, doc, getDoc, addDoc } from 'firebase/firestore';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { db } from '@/firebase';
 import { useRoute } from 'vue-router';
 
@@ -39,8 +42,22 @@ export default {
     const faculty = ref('');
     const gender = ref('male');
     const eventDetails = ref({});
+    const userEmail = ref(null); // ユーザーのメールアドレスを保存
     const route = useRoute();
+    const auth = getAuth();
 
+    // ログイン中のユーザーのメールアドレスを取得
+    onMounted(() => {
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          userEmail.value = user.email; // メールアドレスをセット
+        } else {
+          userEmail.value = null; // 未ログインの場合
+        }
+      });
+    });
+
+    // イベントの詳細を取得
     const fetchEventDetails = async () => {
       const eventId = route.query.eventId;
       if (eventId) {
@@ -58,14 +75,21 @@ export default {
       }
     };
 
+    // 予約情報を Firebase に保存
     const submitReservation = async () => {
+      if (!userEmail.value) {
+        alert('ログインしてください');
+        return;
+      }
+
       try {
         await addDoc(collection(db, 'reservations'), {
           name: name.value,
           faculty: faculty.value,
           gender: gender.value,
+          email: userEmail.value, // ユーザーのメールアドレスを保存
           eventId: route.query.eventId,
-          eventName: eventDetails.value.title, // イベント名を追加
+          eventName: eventDetails.value.title,
           createdAt: new Date(),
         });
 
@@ -83,7 +107,7 @@ export default {
 
     onMounted(fetchEventDetails);
 
-    return { name, faculty, gender, submitReservation, eventDetails };
+    return { name, faculty, gender, userEmail, submitReservation, eventDetails };
   }
 };
 </script>
