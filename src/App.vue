@@ -2,61 +2,51 @@
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import homeButton from '@/assets/homebutton.png'; 
 
-// メニューの開閉状態を管理するためのrefを定義
 const menuOpen = ref(false);
-const isAuthenticated = ref(false); // 認証状態を管理するref
+const isAuthenticated = ref(false);
 const router = useRouter();
-const auth = getAuth(); // Firebaseの認証インスタンス
+const auth = getAuth();
 
-// メニューの開閉をトグルする関数
 const toggleMenu = () => {
   menuOpen.value = !menuOpen.value;
 };
 
-// アプリ起動時に認証状態を監視
 const monitorAuthState = () => {
   onAuthStateChanged(auth, (user) => {
     if (!user) {
-      // 認証されていなければサインアップページにリダイレクト
       router.push('/signup');
     } else {
-      // 認証されていれば正常にアプリを使用可能
       isAuthenticated.value = true;
     }
   });
 };
 
-// 認証されていない場合、遷移を防ぐ
 const guardRoute = (to) => {
   if (!isAuthenticated.value && to.path !== '/signup' && to.path !== '/login') {
-    // 認証されていない場合、サインアップページにリダイレクト
     router.push('/signup');
     return false;
   }
   return true;
 };
 
-// 初期化
 onMounted(monitorAuthState);
 
-// ルーターガード
 router.beforeEach((to, from, next) => {
-  if (guardRoute(to)) {
-    next();
+  if (!guardRoute(to)) {
+    next(false); // ルート遷移をキャンセル
+  } else {
+    next(); // 通常の遷移
   }
 });
 </script>
 
 <template>
   <header>
-    <!-- イベントカレンダーのタイトルをクリックするとホームに遷移 -->
     <router-link to="/" class="header-title" v-if="isAuthenticated">イベントカレンダー</router-link>
-    
-    <!-- サインアップまたはログインが完了していない場合、リンクは表示しない -->
     <button v-if="isAuthenticated" class="burger-menu" @click="toggleMenu">☰</button>
     <nav v-if="menuOpen && isAuthenticated">
-      <!-- メニュー内のリンクをクリックすると画面遷移 -->
       <router-link to="/" @click="menuOpen = false">ホーム</router-link>
       <router-link to="/admin" @click="menuOpen = false">管理</router-link>
       <router-link to="/mypage" @click="menuOpen = false">マイページ</router-link>
@@ -64,13 +54,21 @@ router.beforeEach((to, from, next) => {
   </header>
 
   <main>
-    <!-- 認証されていない場合はクリックできないように遮断 -->
     <div v-if="!isAuthenticated">
       <p>認証が完了していません。サインアップしてください。</p>
     </div>
-
-    <router-view /> <!-- ここで現在のコンポーネントが表示されます -->
+    <router-view />
   </main>
+
+  <footer v-if="isAuthenticated">
+    <nav class="footer-nav">
+      <router-link to="/">
+        <img :src="homeButton" alt="ホーム" class="home-button" />
+      </router-link>
+      <router-link to="/admin">管理</router-link>
+      <router-link to="/mypage">マイページ</router-link>
+    </nav>
+  </footer>
 </template>
 
 <style scoped>
@@ -115,5 +113,28 @@ nav a {
 main {
   padding: 20px;
   text-align: center;
+}
+footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background: #42b883;
+  padding: 10px 0;
+  text-align: center;
+  height: 30px;
+}
+.footer-nav a {
+  margin: 0 15px;
+  color: white;
+  text-decoration: none;
+  font-size: 18px;
+}
+.footer-nav a:hover {
+  text-decoration: underline;
+}
+.home-button {
+  width: 24px;
+  height: 24px;
+  vertical-align: middle;
 }
 </style>
