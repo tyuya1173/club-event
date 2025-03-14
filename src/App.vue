@@ -2,16 +2,10 @@
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
-import homeButton from '@/assets/homebutton.png'; 
 
-const menuOpen = ref(false);
 const isAuthenticated = ref(false);
 const router = useRouter();
 const auth = getAuth();
-
-const toggleMenu = () => {
-  menuOpen.value = !menuOpen.value;
-};
 
 const monitorAuthState = () => {
   onAuthStateChanged(auth, (user) => {
@@ -45,12 +39,6 @@ router.beforeEach((to, from, next) => {
 <template>
   <header>
     <router-link to="/" class="header-title" v-if="isAuthenticated">イベントカレンダー</router-link>
-    <button v-if="isAuthenticated" class="burger-menu" @click="toggleMenu">☰</button>
-    <nav v-if="menuOpen && isAuthenticated">
-      <router-link to="/" @click="menuOpen = false">ホーム</router-link>
-      <router-link to="/admin" @click="menuOpen = false">管理</router-link>
-      <router-link to="/mypage" @click="menuOpen = false">マイページ</router-link>
-    </nav>
   </header>
 
   <main>
@@ -62,11 +50,9 @@ router.beforeEach((to, from, next) => {
 
   <footer v-if="isAuthenticated">
     <nav class="footer-nav">
-      <router-link to="/">
-        <img :src="homeButton" alt="ホーム" class="home-button" />
-      </router-link>
-      <router-link to="/admin">管理</router-link>
-      <router-link to="/mypage">マイページ</router-link>
+      <router-link to="/" class="footer-link">ホーム</router-link>
+      <router-link to="/admin" class="footer-link">管理</router-link>
+      <router-link to="/mypage" class="footer-link">マイページ</router-link>
     </nav>
   </footer>
 </template>
@@ -74,7 +60,7 @@ router.beforeEach((to, from, next) => {
 <style scoped>
 header {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   padding: 10px 20px;
   background: #42b883;
@@ -89,27 +75,6 @@ header {
 .header-title:hover {
   text-decoration: underline;
 }
-.burger-menu {
-  font-size: 24px;
-  background: none;
-  border: none;
-  color: white;
-  cursor: pointer;
-}
-nav {
-  position: absolute;
-  top: 50px;
-  right: 10px;
-  background: white;
-  padding: 10px;
-  border: 1px solid #ddd;
-}
-nav a {
-  display: block;
-  padding: 5px;
-  color: #42b883;
-  text-decoration: none;
-}
 main {
   padding: 20px;
   text-align: center;
@@ -119,22 +84,25 @@ footer {
   bottom: 0;
   width: 100%;
   background: #42b883;
-  padding: 10px 0;
+  padding: 20px 0;
   text-align: center;
-  height: 30px;
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-.footer-nav a {
-  margin: 0 15px;
+.footer-nav {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  align-items: center;
+}
+.footer-link {
   color: white;
-  text-decoration: none;
   font-size: 18px;
+  text-decoration: none;
 }
-.footer-nav a:hover {
+.footer-link:hover {
   text-decoration: underline;
-}
-.home-button {
-  width: 24px;
-  height: 24px;
-  vertical-align: middle;
 }
 </style>
