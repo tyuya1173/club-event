@@ -5,6 +5,7 @@ import Admin from '../components/Admin.vue';
 import SignUp from '../components/SignUp.vue';
 import Login from '../components/Login.vue';
 import MyPage from '../components/MyPage.vue';
+import Participants from '../components/Participants.vue';
 
 const routes = [
   {
@@ -36,6 +37,11 @@ const routes = [
     path: '/mypage',
     name: 'mypage',
     component: MyPage, // マイページ
+  },
+  {
+    path: '/participants/:eventId',
+    name: 'participants',
+    component: Participants, // 参加者一覧
   }
 ];
 

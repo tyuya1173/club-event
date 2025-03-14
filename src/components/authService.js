@@ -1,11 +1,18 @@
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
-import { ref } from 'vue';
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
+import { ref, onMounted } from 'vue';
 
 const auth = getAuth();
 
 export const useAuth = () => {
   const user = ref(null);
   const errorMessage = ref('');
+
+  // Firebaseの認証状態を監視
+  onMounted(() => {
+    onAuthStateChanged(auth, (currentUser) => {
+      user.value = currentUser;
+    });
+  });
 
   // 共通のエラーハンドリング関数
   const handleError = (error) => {
@@ -35,8 +42,8 @@ export const useAuth = () => {
   };
 
   // ログアウト処理
-  const logout = () => {
-    auth.signOut();
+  const logout = async () => {
+    await auth.signOut();
     user.value = null;
   };
 
