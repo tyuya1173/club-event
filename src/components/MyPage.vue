@@ -1,25 +1,27 @@
 <template>
-  <div class="mypage">
-    <h2>マイページ</h2>
+  <div class="mypage-container">
+    <div class="mypage">
+      <h2>マイページ</h2>
 
-    <div class="section">
-      <h3>登録情報</h3>
-      <p><strong>メールアドレス:</strong> {{ user?.email }}</p>
+      <div class="section">
+        <h3>登録情報</h3>
+        <p><strong>メールアドレス:</strong> {{ user?.email }}</p>
+      </div>
+
+      <div class="section">
+        <h3>予約したイベント</h3>
+        <ul v-if="reservations.length">
+          <li v-for="event in reservations" :key="event.id">
+            <strong @click="openEventDetail(event)" class="event-link">{{ event.eventName }}</strong>
+            - {{ formatDate(event.eventDate) }}
+            <button @click="deleteReservation(event.id)" class="delete-button">予約をキャンセルする</button>
+          </li>
+        </ul>
+        <p v-else>予約したイベントはありません。</p>
+      </div>
+
+      <button @click="logout" :disabled="loading">ログアウト</button>
     </div>
-
-    <div class="section">
-      <h3>予約したイベント</h3>
-      <ul v-if="reservations.length">
-        <li v-for="event in reservations" :key="event.id">
-          <strong @click="openEventDetail(event)" class="event-link">{{ event.eventName }}</strong>
-          - {{ formatDate(event.eventDate) }}
-          <button @click="deleteReservation(event.id)" class="delete-button">予約をキャンセルする</button>
-        </li>
-      </ul>
-      <p v-else>予約したイベントはありません。</p>
-    </div>
-
-    <button @click="logout" :disabled="loading">ログアウト</button>
 
     <div v-if="selectedEvent" class="modal">
       <div class="modal-content">
@@ -154,6 +156,10 @@ export default {
 </script>
 
 <style scoped>
+.mypage-container {
+  padding-bottom: 80px; /* フッターと重ならないように調整 */
+}
+
 .mypage {
   max-width: 600px;
   margin: auto;

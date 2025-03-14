@@ -1,5 +1,9 @@
 <template>
-  <FullCalendar :options="calendarOptions" />
+  <div class="calendar-wrapper">
+    <div class="calendar-container">
+      <FullCalendar :options="calendarOptions" />
+    </div>
+  </div>
 </template>
 
 <script>
@@ -86,6 +90,17 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.calendar-wrapper {
+  position: relative;
+  z-index: 0;
+}
+
+.calendar-container {
+  padding-bottom: 150px; /* フッターと重ならないように調整 */
+  position: relative;
+  z-index: 1;
+}
+
 /* スマホ用にレスポンシブ対応 */
 @media (max-width: 600px) {
   .fc {

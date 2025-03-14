@@ -1,32 +1,34 @@
 <template>
-  <form @submit.prevent="submitReservation">
-    <h2>イベント: {{ eventDetails.title }}</h2>
-    <p>{{ eventDetails.description }}</p>
-    <p>日時: {{ eventDetails.date }}</p>
-    <br>
-    <label>氏名: <input v-model="name" required /></label>
-    <br>
-    <label>学部:
-      <select v-model="faculty">
-        <option value="システム工学部">システム工学部</option>
-        <option value="教育学部">教育学部</option>
-        <option value="経済学部">経済学部</option>
-        <option value="観光学部">観光学部</option>
-        <option value="社会インフォマティクス">社会インフォマティクス学環</option>
-      </select>
-    </label>
-    <br>
-    <label>性別:
-      <select v-model="gender">
-        <option value="male">男性</option>
-        <option value="female">女性</option>
-      </select>
-    </label>
-    <br>
-    <p><strong>登録メールアドレス:</strong> {{ userEmail || '未ログイン' }}</p>
-    <br>
-    <button type="submit" :disabled="!userEmail">予約する</button>
-  </form>
+  <div class="reservation-container">
+    <form @submit.prevent="submitReservation">
+      <h2>イベント: {{ eventDetails.title }}</h2>
+      <p>{{ eventDetails.description }}</p>
+      <p>日時: {{ eventDetails.date }}</p>
+      <br>
+      <label>氏名: <input v-model="name" required /></label>
+      <br>
+      <label>学部:
+        <select v-model="faculty">
+          <option value="システム工学部">システム工学部</option>
+          <option value="教育学部">教育学部</option>
+          <option value="経済学部">経済学部</option>
+          <option value="観光学部">観光学部</option>
+          <option value="社会インフォマティクス">社会インフォマティクス学環</option>
+        </select>
+      </label>
+      <br>
+      <label>性別:
+        <select v-model="gender">
+          <option value="male">男性</option>
+          <option value="female">女性</option>
+        </select>
+      </label>
+      <br>
+      <p><strong>登録メールアドレス:</strong> {{ userEmail || '未ログイン' }}</p>
+      <br>
+      <button type="submit" :disabled="!userEmail" class="reserve-button">予約する</button>
+    </form>
+  </div>
 </template>
 
 <script>
@@ -118,11 +120,12 @@ export default {
 </script>
 
 <style scoped>
-form {
+.reservation-container {
   max-width: 600px;
   margin: auto;
   padding: 20px;
   font-family: Arial, sans-serif;
+  padding-bottom: 200px; /* フッターと重ならないように調整 */
 }
 
 h2 {
@@ -153,6 +156,8 @@ button {
   cursor: pointer;
   font-size: 1rem;
   width: 100%;
+  position: relative;
+  z-index: 2;
 }
 
 button:disabled {
@@ -166,8 +171,9 @@ p {
 
 /* レスポンシブ対応 */
 @media (max-width: 600px) {
-  form {
+  .reservation-container {
     padding: 15px;
+    padding-bottom: 250px; /* さらにフッターとの距離を確保 */
   }
 
   h2 {
@@ -186,6 +192,8 @@ p {
   button {
     padding: 12px;
     font-size: 1.2rem;
+    position: relative;
+    z-index: 2;
   }
 
   p {

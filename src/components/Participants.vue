@@ -57,6 +57,7 @@
   .container {
     padding: 20px;
     text-align: center;
+    padding-bottom: 80px; /* フッターと重ならないように調整 */
   }
   button {
     background-color: #42b883;
@@ -70,4 +71,3 @@
     background-color: #367c58;
   }
   </style>
-  
