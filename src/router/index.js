@@ -37,11 +37,6 @@ const routes = [
     path: '/mypage',
     name: 'mypage',
     component: MyPage, // マイページ
-  },
-  {
-    path: '/participants/:eventId',
-    name: 'participants',
-    component: Participants, // 参加者一覧
   }
 ];
 
@@ -49,5 +44,37 @@ const router = createRouter({
   history: createWebHistory(),
   routes,
 });
+
+// 🔒 ルートガードを設定
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
+
+let authResolved = false;
+let cachedUser = null;
+
+function getCurrentUser() {
+  return new Promise((resolve) => {
+    if (authResolved) {
+      resolve(cachedUser);
+    } else {
+      const auth = getAuth();
+      onAuthStateChanged(auth, (user) => {
+        authResolved = true;
+        cachedUser = user;
+        resolve(user);
+      });
+    }
+  });
+}
+
+router.beforeEach(async (to, from, next) => {
+  const user = await getCurrentUser();
+
+  if (to.meta.requiresAuth && !user) {
+    router.push('/login');
+  } else {
+    next();
+  }
+});
+
 
 export default router;

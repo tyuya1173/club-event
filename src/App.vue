@@ -1,84 +1,116 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
 
 const isAuthenticated = ref(false);
+const authChecked = ref(false);
 const router = useRouter();
-const auth = getAuth();
 
-const monitorAuthState = () => {
+const logout = async () => {
+  const auth = getAuth();
+  try {
+    await signOut(auth);
+    isAuthenticated.value = false;
+    router.push('/login');
+  } catch (error) {
+    alert('ログアウトに失敗しました: ' + error.message);
+  }
+};
+
+onMounted(() => {
+  const auth = getAuth();
   onAuthStateChanged(auth, (user) => {
-    if (!user) {
-      router.push('/signup');
-    } else {
+    if (user) {
       isAuthenticated.value = true;
+      if (router.currentRoute.value.path === '/login' || router.currentRoute.value.path === '/signup') {
+        router.push('/');
+      }
+    } else {
+      isAuthenticated.value = false;
+      if (router.currentRoute.value.meta.requiresAuth) {
+        router.push('/login');
+      }
     }
+    authChecked.value = true;
   });
-};
-
-const guardRoute = (to) => {
-  if (!isAuthenticated.value && to.path !== '/signup' && to.path !== '/login') {
-    router.push('/signup');
-    return false;
-  }
-  return true;
-};
-
-onMounted(monitorAuthState);
-
-router.beforeEach((to, from, next) => {
-  if (!guardRoute(to)) {
-    next(false); // ルート遷移をキャンセル
-  } else {
-    next(); // 通常の遷移
-  }
 });
 </script>
 
 <template>
-  <header>
-    <router-link to="/" class="header-title" v-if="isAuthenticated">イベントカレンダー</router-link>
-  </header>
+  <div v-if="authChecked">
+    <header>
+      <router-link to="/" class="header-title">イベントカレンダー</router-link>
+      <div class="header-actions">
+        <router-link v-if="!isAuthenticated" to="/login" class="auth-btn">ログイン</router-link>
+        <button v-else @click="logout" class="auth-btn">ログアウト</button>
+      </div>
+    </header>
 
-  <main>
-    <div v-if="!isAuthenticated">
-      <p>認証が完了していません。サインアップしてください。</p>
-    </div>
-    <router-view />
-  </main>
+    <main>
+      <router-view />
+    </main>
 
-  <footer v-if="isAuthenticated">
-    <nav class="footer-nav">
-      <router-link to="/" class="footer-link">ホーム</router-link>
-      <router-link to="/admin" class="footer-link">管理</router-link>
-      <router-link to="/mypage" class="footer-link">マイページ</router-link>
-    </nav>
-  </footer>
+    <footer v-if="isAuthenticated">
+      <nav class="footer-nav">
+        <router-link to="/" class="footer-link">ホーム</router-link>
+        <router-link to="/admin" class="footer-link">管理</router-link>
+        <router-link to="/mypage" class="footer-link">マイページ</router-link>
+      </nav>
+    </footer>
+  </div>
+  <div v-else>
+    <p>認証確認中...</p>
+  </div>
 </template>
 
 <style scoped>
 header {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   padding: 10px 20px;
   background: #42b883;
   color: white;
   margin-bottom: 100px;
 }
+
 .header-title {
   font-size: 24px;
   color: white;
   text-decoration: none;
 }
+
 .header-title:hover {
   text-decoration: underline;
 }
+
+.header-actions {
+  display: flex;
+  align-items: center;
+}
+
+.auth-btn {
+  background-color: transparent;
+  border: 1px solid white;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.auth-btn:hover {
+  background-color: white;
+  color: #42b883;
+}
+
 main {
   padding: 20px;
   text-align: center;
 }
+
 footer {
   position: fixed;
   bottom: 0;
@@ -91,17 +123,20 @@ footer {
   justify-content: center;
   align-items: center;
 }
+
 .footer-nav {
   display: flex;
   justify-content: center;
   gap: 40px;
   align-items: center;
 }
+
 .footer-link {
   color: white;
   font-size: 18px;
   text-decoration: none;
 }
+
 .footer-link:hover {
   text-decoration: underline;
 }

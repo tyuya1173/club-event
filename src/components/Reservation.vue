@@ -21,6 +21,8 @@
         <select v-model="gender">
           <option value="male">男性</option>
           <option value="female">女性</option>
+          <option value="other">その他</option>
+          <option value="preferNotToSay">回答しない</option>
         </select>
       </label>
       <br>

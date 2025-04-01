@@ -39,7 +39,6 @@
           詳細: {{ event.description }}
           <button @click="editEvent(event)">編集</button>
           <button @click="deleteEvent(event.id)">削除</button>
-          <Member :eventId="event.id" />
         </li>
       </ul>
 
@@ -52,10 +51,8 @@
 import { ref, onMounted } from 'vue';
 import { collection, addDoc, getDocs, doc, deleteDoc, updateDoc } from 'firebase/firestore';
 import { db } from '@/firebase';
-import Member from '@/components/Member.vue';
 
 export default {
-  components: { Member },
   setup() {
     const password = ref('');
     const authenticated = ref(false);

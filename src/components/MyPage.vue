@@ -40,6 +40,7 @@ import { ref, onMounted } from 'vue';
 import { getAuth, signOut, onAuthStateChanged } from 'firebase/auth';
 import { getFirestore, collection, query, where, getDocs, doc, getDoc, deleteDoc } from 'firebase/firestore';
 
+
 export default {
   setup() {
     const auth = getAuth();
@@ -132,7 +133,7 @@ export default {
       try {
         await signOut(auth);
         alert('ログアウトしました');
-        window.location.reload();
+        router.push('/login');
       } catch (error) {
         alert(error.message);
       } finally {
